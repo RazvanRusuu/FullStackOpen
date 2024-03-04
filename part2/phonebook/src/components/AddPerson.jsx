@@ -10,7 +10,6 @@ const AddPerson = ({
     onSubmit();
   };
 
-  console.log(onSubmit);
   return (
     <form onSubmit={handleSubmit}>
       <div>
