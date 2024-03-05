@@ -3,18 +3,21 @@ import axios from "axios";
 import Filter from "./components/Filter";
 import AddPerson from "./components/AddPerson";
 import Persons from "./components/Persons";
+import {
+  getPersons,
+  createPerson,
+  deletePerson,
+  updatePerson,
+} from "../api-client";
 import { useEffect } from "react";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
 
   useEffect(() => {
-    const getPersons = async () => {
-      const response = await axios.get("http://localhost:3001/persons");
-      setPersons(response.data);
-    };
-
-    getPersons();
+    getPersons()
+      .then((persons) => setPersons(persons))
+      .catch((err) => console.log(err));
   }, []);
 
   const [newName, setNewName] = useState("");
@@ -22,17 +25,39 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   const handleSubmit = () => {
-    setPersons((prev) => {
-      const exist = prev.find((pers) => pers.name === newName);
-      if (exist) {
-        alert(`${newName} already in the phone book`);
-        return prev;
-      }
+    const alreadyExistPerson = persons.find((pers) => pers.name === newName);
+    if (alreadyExistPerson) {
+      const confirm = window.confirm(
+        `${newName} already in the phone book, replace the number with the new one?`
+      );
 
-      return [...prev, { name: newName, number: newNumber }];
+      if (!confirm) return;
+
+      updatePerson({ ...alreadyExistPerson, number: newNumber }).then(
+        (person) => {
+          setPersons((prev) => {
+            return prev.map((pers) => (pers.id === person.id ? person : pers));
+          });
+        }
+      );
+      return;
+    }
+
+    createPerson({ name: newName, number: newNumber }).then((person) => {
+      setPersons((prev) => [...prev, person]);
     });
     setNewName("");
     setNewNumber("");
+  };
+
+  const handleDelete = (person) => {
+    const confirm = window.confirm(`Delete ${person.name}?`);
+
+    if (!confirm) return;
+
+    deletePerson(person.id).then((data) => {
+      setPersons((prev) => prev.filter((pers) => pers.id !== data.id));
+    });
   };
 
   const filteredPersons = persons.filter((pers) =>
@@ -52,7 +77,7 @@ const App = () => {
         onSubmit={handleSubmit}
       />
       <h2>Numbers</h2>
-      <Persons persons={filteredPersons} />
+      <Persons onDelete={handleDelete} persons={filteredPersons} />
     </div>
   );
 };
