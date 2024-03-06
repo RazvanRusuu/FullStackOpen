@@ -16,7 +16,7 @@ const App = () => {
 
   useEffect(() => {
     getPersons()
-      .then((persons) => setPersons(persons))
+      .then((persons) => setPersons(persons.data))
       .catch((err) => console.log(err));
   }, []);
 
@@ -44,7 +44,7 @@ const App = () => {
     }
 
     createPerson({ name: newName, number: newNumber }).then((person) => {
-      setPersons((prev) => [...prev, person]);
+      setPersons((prev) => [...prev, person.data]);
     });
     setNewName("");
     setNewNumber("");
@@ -56,13 +56,15 @@ const App = () => {
     if (!confirm) return;
 
     deletePerson(person.id).then((data) => {
-      setPersons((prev) => prev.filter((pers) => pers.id !== data.id));
+      setPersons((prev) => prev.filter((pers) => pers.id !== person.id));
     });
   };
 
-  const filteredPersons = persons.filter((pers) =>
-    pers.name.toLowerCase().includes(filter.toLocaleLowerCase())
-  );
+  console.log(persons);
+
+  const filteredPersons = persons?.filter((pers) => {
+    return pers.name?.toLowerCase().includes(filter?.toLowerCase());
+  });
 
   return (
     <div>
