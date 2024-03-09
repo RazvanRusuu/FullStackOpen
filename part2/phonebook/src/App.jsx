@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import AddPerson from "./components/AddPerson";
 import Persons from "./components/Persons";
@@ -59,8 +58,6 @@ const App = () => {
       setPersons((prev) => prev.filter((pers) => pers.id !== person.id));
     });
   };
-
-  console.log(persons);
 
   const filteredPersons = persons?.filter((pers) => {
     return pers.name?.toLowerCase().includes(filter?.toLowerCase());
