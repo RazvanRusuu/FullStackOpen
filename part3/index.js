@@ -1,15 +1,23 @@
 const express = require("express");
-const morgan = require("morgan");
+const cors = require("cors");
+// const morgan = require("morgan");
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms :body")
-);
+app.use(cors());
+app.use(express.static("dist"));
 
-morgan.token("body", (req, res) => {
-  return JSON.stringify(req.body);
-});
+// if (process.env.NODE_ENV !== "prod") {
+//   app.use(
+//     morgan(
+//       ":method :url :status :res[content-length] - :response-time ms :body"
+//     )
+//   );
+//   morgan.token("body", (req, res) => {
+//     return JSON.stringify(req.body);
+//   });
+// }
 
 const persons = [
   {
@@ -92,7 +100,7 @@ app.delete("/api/persons/:id", (req, res) => {
   return res.status(204).json({ status: "success", data: null });
 });
 
-const port = 8001;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("server listen to" + port);
 });
