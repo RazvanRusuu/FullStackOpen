@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
+const { MONGO_URI } = require('../../utilis/config')
 
 mongoose
-  .connect(process.env.MONGO_URI.replace('<pass>', process.env.MONGO_PASS))
-  .then((con) => console.log('Connect successfully'))
+  .connect(MONGO_URI)
+  .then(() => console.log('Connect successfully'))
   .catch((err) => console.log(err + 'err connected to mongo'))
 
 const PersonSchema = new mongoose.Schema({

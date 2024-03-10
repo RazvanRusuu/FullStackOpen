@@ -1,4 +1,3 @@
-require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const app = express()
@@ -6,8 +5,8 @@ const morgan = require('morgan')
 
 const personRouter = require('./src/routes/personRoute')
 const { errorHandler } = require('./src/controllers/errorHandler')
-
 const Person = require('./src/models/Person')
+const { PORT } = require('./utilis/config')
 
 app.use(express.json())
 app.use(cors())
@@ -33,7 +32,7 @@ app.get('/api/info', async (_, res) => {
 
 app.use(errorHandler)
 
-const port = process.env.PORT || 3000
+const port = PORT || 3000
 app.listen(port, () => {
   console.log('server listen to' + port)
 })
