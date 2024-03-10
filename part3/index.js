@@ -1,9 +1,14 @@
 const express = require("express");
 const cors = require("cors");
-// const morgan = require("morgan");
-require("dotenv").config();
-
 const app = express();
+require("dotenv").config();
+// const morgan = require("morgan");
+const { MongoClient } = require("mongodb");
+
+MongoClient.connect(process.env.MONGO_URI)
+  .then((con) => console.log("Connect successfully"))
+  .catch((err) => console.log(err + "err connected to mongo"));
+
 app.use(express.json());
 app.use(cors());
 app.use(express.static("dist"));
