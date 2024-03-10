@@ -5,59 +5,79 @@ exports.getPersons = async (req, res) => {
     const persons = await Person.find({});
     return res.status(200).json({ status: "success", data: persons });
   } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ status: "failed", message: "somthing wnet wrong" });
+    next(error);
+  }
+};
+exports.updatePerson = async (req, res, next) => {
+  try {
+    const { name, number } = req.body;
+    const id = req.params.id;
+
+    const updatedPerson = await Person.findByIdAndUpdate(
+      id,
+      { name, number },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(201).json({ message: "success", data: updatedPerson });
+  } catch (error) {
+    next(error);
   }
 };
 
-exports.getPerson = async (req, res) => {
-  const id = req.params.id;
+exports.getPerson = async (req, res, next) => {
+  try {
+    const id = req.params.id;
 
-  const person = await Person.findById(id);
+    const person = await Person.findById(id);
 
-  if (!person) {
-    return res
-      .status(404)
-      .json({ status: "fail", message: "No person was found with this id" });
+    if (!person) {
+      return res
+        .status(404)
+        .json({ status: "fail", message: "No person was found with this id" });
+    }
+
+    return res.status(200).json({ status: "succes", data: person });
+  } catch (error) {
+    next(error);
   }
-
-  return res.status(200).json({ status: "succes", data: person });
 };
 
-exports.createPerson = async (req, res) => {
-  const { name, number } = req.body;
+exports.createPerson = async (req, res, next) => {
+  try {
+    const { name, number } = req.body;
 
-  if (!number || !name) {
-    return res.status(400).json({
-      status: "fail",
-      message: "The person must hava a name annd a number",
-    });
+    if (!number || !name) {
+      return res.status(400).json({
+        status: "fail",
+        message: "The person must hava a name annd a number",
+      });
+    }
+
+    const exists = await Person.findOneAndUpdate(
+      { name: name },
+      { name, number },
+      { new: true }
+    );
+
+    if (exists) {
+      return res.status(201).json({ message: "succes", data: exists });
+    }
+
+    const newPerson = await Person.create({ name, number });
+
+    res.status(201).json({ status: "success", data: newPerson });
+  } catch (error) {
+    next(error);
   }
-
-  const exists = await Person.findOne({ name: name });
-
-  if (exists) {
-    return res.status(404).json({
-      status: "fail",
-      message: "A person with this name already exists",
-    });
-  }
-
-  const newPerson = await Person.create({ name, number });
-
-  res.status(201).json({ status: "success", data: newPerson });
 };
 
-exports.deletePerson = async (req, res) => {
+exports.deletePerson = async (req, res, next) => {
   try {
     const id = req.params.id;
     await Person.deleteOne({ _id: id });
     return res.status(204).json({ status: "success", data: null });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ status: "fail", message: "Something went wrong" });
+    next(err);
   }
 };
