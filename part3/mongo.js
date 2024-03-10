@@ -16,5 +16,9 @@ const person = new Person({ name, number });
 
 person.save().then((res) => {
   console.log(res);
+});
+
+Person.find({}).then((res) => {
+  console.log(res);
   mongoose.connection.close();
 });
