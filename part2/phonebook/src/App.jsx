@@ -12,16 +12,19 @@ import { useEffect } from "react";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
-
-  useEffect(() => {
-    getPersons()
-      .then((persons) => setPersons(persons.data))
-      .catch((err) => console.log(err));
-  }, []);
-
+  const [error, setError] = useState(null);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+
+  useEffect(() => {
+    async function getData() {
+      getPersons()
+        .then((persons) => setPersons(persons.data))
+        .catch((err) => console.log(err));
+    }
+    getData();
+  }, []);
 
   const handleSubmit = () => {
     const alreadyExistPerson = persons.find((pers) => pers.name === newName);
@@ -32,24 +35,29 @@ const App = () => {
 
       if (!confirm) return;
 
-      updatePerson({ ...alreadyExistPerson, number: newNumber }).then(
-        (person) => {
+      updatePerson({ ...alreadyExistPerson, number: newNumber })
+        .then((person) => {
           setPersons((prev) => {
-            return prev.map((pers) => (pers.id === person.id ? person : pers));
+            return prev.map((pers) =>
+              pers.id === person.data.id ? person.data : pers
+            );
           });
-        }
-      );
+        })
+        .catch((err) => setError(err.response.data));
       return;
     }
 
-    createPerson({ name: newName, number: newNumber }).then((person) => {
-      setPersons((prev) => [...prev, person.data]);
-    });
+    createPerson({ name: newName, number: newNumber })
+      .then((person) => {
+        setPersons((prev) => [...prev, person.data]);
+      })
+      .catch((err) => setError(err.response.data));
+
     setNewName("");
     setNewNumber("");
   };
 
-  const handleDelete = (person) => {
+  const handleDelete = async (person) => {
     const confirm = window.confirm(`Delete ${person.name}?`);
 
     if (!confirm) return;
@@ -63,9 +71,16 @@ const App = () => {
     return pers.name?.toLowerCase().includes(filter?.toLowerCase());
   });
 
+  console.log(error);
+
   return (
     <div>
       <h2>Phonebook</h2>
+      {error && (
+        <p style={{ color: "red", fontSize: "12px" }}>
+          {error?.message?.message}
+        </p>
+      )}
       <Filter value={filter} onChange={setFilter} />
       <h3>Add a new </h3>
       <AddPerson

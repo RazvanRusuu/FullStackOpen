@@ -11,6 +11,15 @@ const getPersons = async () => {
   }
 };
 
+const getPerson = async (personId) => {
+  try {
+    const response = await axios.get(`${API_URL}/${personId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const createPerson = async (person) => {
   try {
     const response = await axios.post(API_URL, person);
@@ -39,4 +48,4 @@ const deletePerson = async (id) => {
   }
 };
 
-export { getPersons, createPerson, updatePerson, deletePerson };
+export { getPersons, createPerson, updatePerson, deletePerson, getPerson };
