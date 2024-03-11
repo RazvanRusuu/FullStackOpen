@@ -12,15 +12,8 @@ exports.createBlog = async (req, res, next) => {
         message: "Title or author are required",
       });
     }
-    const existingBlog = await Blog.findOne({ author, title });
-    if (existingBlog) {
-      return res
-        .status(400)
-        .json({ status: "failed", message: "Blog already exists" });
-    }
-
     const newBlog = await Blog.create({ title, author, likes, url });
-    return res.staus(201).json({ status: "succes", data: newBlog });
+    return res.status(201).json({ status: "succes", data: newBlog });
   } catch (error) {
     next(error);
   }

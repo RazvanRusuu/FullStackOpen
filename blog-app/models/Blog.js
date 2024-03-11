@@ -20,6 +20,8 @@ const BlogSchema = new mongoose.Schema({
   },
 });
 
+BlogSchema.index({ title: 1, author: 1 }, { unique: true });
+
 mongoose
   .connect(MONGO_URI)
   .then(() => "Successfully connected to DB")
