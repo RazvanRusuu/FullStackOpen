@@ -3,6 +3,10 @@ const errorHandler = (err, req, res, next) => {
     return res.status(404).json("Cast Error- in progress");
   }
 
+  if (err.name === "ValidationError") {
+    return res.status(404).json("ValidationError- in progress");
+  }
+
   next(err);
 };
 module.exports = errorHandler;

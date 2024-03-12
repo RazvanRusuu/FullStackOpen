@@ -113,6 +113,6 @@ describe("author with most blogs", () => {
   test("when multiple blogs, return author with most blogs and the number of blogs", () => {
     const result = listHelper.mostBlogs(blogs);
 
-    assert.deepEqual(result, { author: "Robert C. Martin", blogs: 4 });
+    assert.deepStrictEqual(result, { author: "Robert C. Martin", blogs: 4 });
   });
 });
