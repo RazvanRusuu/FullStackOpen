@@ -16,6 +16,10 @@ const BlogSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 BlogSchema.index({ title: 1, author: 1 }, { unique: true });

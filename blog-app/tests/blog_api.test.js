@@ -3,9 +3,10 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const assert = require("node:assert");
 
-const { initialsBlogs, blogsDB } = require("./tests_helpers");
+const { initialsBlogs, blogsDB, usersInDB } = require("./tests_helpers");
 const app = require("../app");
 const Blog = require("../models/Blog");
+const { application } = require("express");
 
 const api = supertest(app);
 
@@ -55,11 +56,15 @@ describe("when there is initially saved blogs", () => {
 
   describe("addition of a new blog", () => {
     test("a valid blog can be added", async () => {
+      const userAtStart = await usersInDB();
+      const firstUser = userAtStart[0];
+
       const blog = {
         title: "Title",
         author: "Author",
         likes: 2,
         url: "url",
+        userId: firstUser.id,
       };
 
       const newBlog = new Blog(blog);
@@ -70,10 +75,10 @@ describe("when there is initially saved blogs", () => {
         .expect(201)
         .expect("Content-type", /application\/json/);
 
-      const blogs = await api.get("/api/blog");
+      const blogs = await blogsDB();
 
-      assert(blogs.body.data.length, initialsBlogs.length);
-      const authors = blogs.body.data.map((blog) => blog.author);
+      assert(blogs.length, initialsBlogs.length);
+      const authors = blogs.map((blog) => blog.author);
       assert(authors.includes(blog["author"]));
       await newBlog.deleteOne();
     });
