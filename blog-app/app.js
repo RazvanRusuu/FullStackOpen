@@ -7,6 +7,7 @@ const errorHandler = require("./controllers/errorHandler");
 const { MONGO_URI } = require("./utils/config");
 const blogRouter = require("./routes/blogRoute");
 const userRouter = require("./routes/usersRoute");
+const login = require("./controllers/loginController");
 
 const app = express();
 
@@ -20,6 +21,7 @@ mongoose
 
 app.use("/api/blog", blogRouter);
 app.use("/api/users", userRouter);
+app.post("/api/login", login);
 app.use(errorHandler);
 
 module.exports = app;

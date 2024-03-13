@@ -17,7 +17,7 @@ exports.deleteBlog = async (req, res) => {
 };
 
 exports.createBlog = async (req, res) => {
-  const { title, author, likes, url, userId } = req.body;
+  const { title, author, likes, url } = req.body;
 
   if (!title || !author) {
     return res.status(400).json({
@@ -25,7 +25,7 @@ exports.createBlog = async (req, res) => {
       message: "Title or author are required",
     });
   }
-  const user = await User.findById(userId);
+  const user = await User.findById(req.userId);
 
   const newBlog = new Blog({
     title,
