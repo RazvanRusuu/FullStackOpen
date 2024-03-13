@@ -30,9 +30,9 @@ const loginController = async (req, res) => {
     httpOnly: true,
   });
 
-  res
-    .status(200)
-    .json({ data: { username: user.username, name: user.name, token } });
+  res.status(200).json({
+    data: { username: user.username, name: user.name, id: user.id, token },
+  });
 };
 
 module.exports = loginController;

@@ -12,7 +12,7 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).json({ error: `Expected ${pattern} to be unique ` });
   }
 
-  if (err.name === "JsonWebTokenError" && err.name === "TokenExpiredError") {
+  if (err.name === "JsonWebTokenError") {
     return res.status(401).json({ error: `Invalid or expired token` });
   }
 

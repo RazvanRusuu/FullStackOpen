@@ -1,4 +1,4 @@
-const { test, after, beforeEach, describe } = require("node:test");
+const { test, after, beforeEach, describe, before } = require("node:test");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const assert = require("node:assert");
@@ -6,9 +6,20 @@ const assert = require("node:assert");
 const { initialsBlogs, blogsDB, usersInDB } = require("./tests_helpers");
 const app = require("../app");
 const Blog = require("../models/Blog");
-const { application } = require("express");
 
 const api = supertest(app);
+
+const logUserIn = async () => {
+  const response = await api
+    .post("/api/login")
+    .send({ username: "root", password: "sekret" })
+    .expect(200);
+
+  return {
+    token: response.body.data.token,
+    id: response.body.data.id,
+  };
+};
 
 describe("when there is initially saved blogs", () => {
   beforeEach(async () => {
@@ -36,7 +47,7 @@ describe("when there is initially saved blogs", () => {
     assert.strictEqual(total, 15);
   });
 
-  describe("viewing a specific note", () => {
+  describe("viewing a specific blog", () => {
     test("given id get correct blog", async () => {
       const blogs = await blogsDB();
       const firstBlog = blogs[0];
@@ -56,21 +67,21 @@ describe("when there is initially saved blogs", () => {
 
   describe("addition of a new blog", () => {
     test("a valid blog can be added", async () => {
-      const userAtStart = await usersInDB();
-      const firstUser = userAtStart[0];
+      const { id, token } = await logUserIn();
 
       const blog = {
         title: "Title",
         author: "Author",
         likes: 2,
         url: "url",
-        userId: firstUser.id,
+        user: id,
       };
 
       const newBlog = new Blog(blog);
 
       await api
         .post("/api/blog")
+        .set("Authorization", `Bearer ${token}`)
         .send(blog)
         .expect(201)
         .expect("Content-type", /application\/json/);
@@ -97,27 +108,47 @@ describe("when there is initially saved blogs", () => {
     });
 
     test("400 status if title, or url is missing", async () => {
-      const repsonse = await api
+      const blogsAtStart = await blogsDB();
+      const { token } = await logUserIn();
+
+      await api
         .post("/api/blog")
+        .set("Authorization", `Bearer ${token}`)
         .send({ title: "Title" })
         .expect(400);
+
+      const blogsAtEnd = await blogsDB();
+      assert.strictEqual(blogsAtStart.length, blogsAtEnd.length);
     });
   });
 
-  describe("update an existing blog", () => {
-    test("update an existing resource with value of 99 likes", async () => {
-      const blogs = await blogsDB();
-      const firstblog = blogs[0];
+  describe("create and update a blog", () => {
+    test("update an existing resource with value of 99 likes when user is logged in", async () => {
+      const blogsAtStart = await blogsDB();
+
+      const { token, id } = await logUserIn();
+
+      const newBlog = new Blog({
+        title: "title",
+        author: "author1",
+        user: id,
+        url: "url",
+      });
+
+      const blog = await newBlog.save();
 
       const response = await api
-        .put("/api/blog/" + firstblog.id)
+        .put("/api/blog/" + blog._id)
+        .set("Authorization", `Bearer ${token}`)
         .send({
-          ...firstblog,
+          ...newBlog,
           likes: 99,
         })
         .expect(201);
 
+      const blogsAtEnd = await blogsDB();
       assert.strictEqual(response.body.data.likes, 99);
+      assert.strictEqual(blogsAtStart.length + 1, blogsAtEnd.length);
     });
   });
 
@@ -125,9 +156,21 @@ describe("when there is initially saved blogs", () => {
     test("given existing blog's id, the blog is deleted from database", async () => {
       const initBlogs = await blogsDB();
 
-      const firstBlog = initBlogs[0];
+      const { token, id } = await logUserIn();
 
-      await api.delete(`/api/blog/${firstBlog.id}`).expect(204);
+      const newBlog = new Blog({
+        title: "title",
+        author: "author1",
+        user: id,
+        url: "url",
+      });
+
+      const blog = await newBlog.save();
+
+      await api
+        .delete(`/api/blog/${blog.id}`)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(204);
 
       const blogs = await blogsDB();
       assert(initBlogs.length, blogs.length - 1);

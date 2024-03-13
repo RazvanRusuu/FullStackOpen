@@ -33,13 +33,13 @@ const blogVerifyUser = async (req, res, next) => {
 
   const blog = await Blog.findById(blogId);
 
-  if (blog && blog.user._id.toString() !== userId) {
+  if (!blog.user || blog.user.toString() !== userId) {
     return res.status(403).json({
       status: "fail",
       message: "You are not allowed to do this action",
+      data: { blog, userId },
     });
   }
-
   next();
 };
 
