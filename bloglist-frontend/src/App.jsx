@@ -50,6 +50,14 @@ const App = () => {
     }
   };
 
+  const handleDelete = (deletedBlog) => {
+    const updatedBlogs = blogs.filter(
+      (currBlog) => currBlog.id !== deletedBlog.id
+    );
+
+    setBlogs(updatedBlogs);
+  };
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
 
@@ -58,6 +66,8 @@ const App = () => {
       setUser(user);
     }
   }, []);
+
+  const sortedBlogsByLikes = blogs.toSorted((a, b) => a.likes - b.likes);
 
   return (
     <div>
@@ -72,8 +82,8 @@ const App = () => {
             <BlogForm handleBlogSubmit={handleBlogSubmit} />
           </Togglable>
 
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+          {sortedBlogsByLikes.map((blog) => (
+            <Blog onDelete={handleDelete} key={blog.id} blog={blog} />
           ))}
         </>
       )}

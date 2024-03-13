@@ -22,4 +22,21 @@ const createBlog = async (body) => {
   }
 };
 
-export default { getAll, createBlog };
+const updateBlog = async (blog) => {
+  try {
+    const request = await axios.put(`${baseUrl}/${blog.id}`, blog);
+    return request.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteBlog = async (blog) => {
+  try {
+    const request = await axios.delete(`${baseUrl}/${blog.id}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default { getAll, createBlog, updateBlog, deleteBlog };
