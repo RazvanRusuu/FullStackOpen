@@ -9,9 +9,15 @@ const loginController = async (req, res) => {
 
   const user = await User.findOne({ username });
 
+  if (!user) {
+    return res
+      .status(404)
+      .json({ status: "fail", message: "Wrong user or password" });
+  }
+
   const correctPassword = await bcrypt.compare(password, user.passwordHash);
 
-  if (!(user || correctPassword)) {
+  if (!correctPassword) {
     return res
       .status(404)
       .json({ status: "fail", message: "Wrong user or password" });

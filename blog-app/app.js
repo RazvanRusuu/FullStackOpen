@@ -19,7 +19,7 @@ mongoose
   .then(() => "Successfully connected to DB")
   .catch((err) => console.log(err));
 
-app.use("/api/blog", blogRouter);
+app.use("/api/blogs", blogRouter);
 app.use("/api/users", userRouter);
 app.post("/api/login", login);
 app.use(errorHandler);
