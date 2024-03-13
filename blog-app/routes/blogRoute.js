@@ -15,7 +15,7 @@ router.route("/").get(getAllBlogs).post(verifyToken, createBlog);
 router
   .route("/:id")
   .get(getBlog)
-  .put(verifyToken, blogVerifyUser, updateBlog)
+  .put(verifyToken, updateBlog)
   .delete(verifyToken, blogVerifyUser, deleteBlog);
 
 module.exports = router;

@@ -69,10 +69,10 @@ exports.getBlog = async (req, res) => {
 
 exports.updateBlog = async (req, res) => {
   const id = req.params.id;
-  const { title, author, url, likes } = req.body;
+  const { title, author, url, likes, user } = req.body;
   const updatedBlog = await Blog.findByIdAndUpdate(
     id,
-    { title, author, url, likes },
+    { title, author, url, likes, user: user?.id },
     {
       runValidators: true,
       new: true,
