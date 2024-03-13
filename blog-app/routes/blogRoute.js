@@ -9,9 +9,13 @@ const {
   updateBlog,
   deleteBlog,
 } = require("../controllers/blogController");
-const { verifyToken } = require("../middleware/verifyToken");
+const { verifyToken, blogVerifyUser } = require("../middleware/middleware");
 
 router.route("/").get(getAllBlogs).post(verifyToken, createBlog);
-router.route("/:id").get(getBlog).put(updateBlog).delete(deleteBlog);
+router
+  .route("/:id")
+  .get(getBlog)
+  .put(verifyToken, blogVerifyUser, updateBlog)
+  .delete(verifyToken, blogVerifyUser, deleteBlog);
 
 module.exports = router;

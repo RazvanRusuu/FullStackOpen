@@ -49,6 +49,21 @@ describe("when there are user in DB", () => {
     assert(usernames.includes(newUser.username));
   });
 
+  test("creation of a user failed if the username or password is less than 3 chars long and a proper status code is sent", async () => {
+    const usersAtStart = await helper.usersInDB();
+    const user = {
+      username: "ra",
+      name: "raz",
+      password: "123",
+    };
+
+    await api.post("/api/users").send(user).expect(400);
+
+    const usersAtEnd = await helper.usersInDB();
+
+    assert.strictEqual(usersAtStart.length, usersAtEnd.length);
+  });
+
   test("creation failed with proper status code if username already taken", async () => {
     const userAtStart = await helper.usersInDB();
 

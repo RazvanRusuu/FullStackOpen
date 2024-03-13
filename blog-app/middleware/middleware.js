@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
+const Blog = require("../models/Blog");
 
 const verifyToken = async (req, res, next) => {
   const token = getTokenFrom(req);
@@ -21,6 +22,23 @@ const verifyToken = async (req, res, next) => {
   }
 
   req.userId = verifiedToken.id;
+  req.username = verifiedToken.username;
+
+  next();
+};
+
+const blogVerifyUser = async (req, res, next) => {
+  const userId = req.userId;
+  const blogId = req.params.id;
+
+  const blog = await Blog.findById(blogId);
+
+  if (blog && blog.user._id.toString() !== userId) {
+    return res.status(403).json({
+      status: "fail",
+      message: "You are not allowed to do this action",
+    });
+  }
 
   next();
 };
@@ -33,4 +51,4 @@ const getTokenFrom = (req) => {
   return null;
 };
 
-module.exports = { verifyToken };
+module.exports = { verifyToken, blogVerifyUser };

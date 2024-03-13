@@ -4,7 +4,11 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 
 const getUsers = async (req, res) => {
-  const users = await User.find().populate("blogs", { username: 0, id: 0 });
+  const users = await User.find().populate("blogs", {
+    username: 0,
+    id: 0,
+    user: 0,
+  });
 
   res.json({ status: "success", data: users });
 };
@@ -13,6 +17,12 @@ const createUsers = async (req, res) => {
   const { username, name, password } = req.body;
   const saltRounds = 10;
 
+  if (password.length < 5) {
+    return res.status(400).json({
+      status: "fail",
+      message: "Password must be at least 5 char long",
+    });
+  }
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
   const user = new User({
