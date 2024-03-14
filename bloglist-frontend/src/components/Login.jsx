@@ -33,19 +33,20 @@ const LoginForm = ({ onSubmit }) => {
           </span>
           <input
             name="username"
+            id="username"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
             type="text"
           />
         </div>
         <div>
-          <label htmlFor="username">password</label>
+          <label htmlFor="password">password</label>
           <span style={{ color: 'red', fontSize: '10px' }}>
             {errors?.['password']}
           </span>
-
           <input
             name="password"
+            id="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
             type="password"

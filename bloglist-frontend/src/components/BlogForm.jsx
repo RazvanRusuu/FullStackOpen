@@ -28,6 +28,7 @@ const BlogForm = ({ handleBlogSubmit }) => {
         <label htmlFor="title">Title</label>
         <input
           type="text"
+          name="title"
           id="title"
           value={formValues?.title || ''}
           onChange={({ target }) => handleChange('title', target.value)}
@@ -38,6 +39,7 @@ const BlogForm = ({ handleBlogSubmit }) => {
         <input
           id="author"
           type="text"
+          name="author"
           value={formValues?.author || ''}
           onChange={({ target }) => handleChange('author', target.value)}
         />
@@ -47,6 +49,7 @@ const BlogForm = ({ handleBlogSubmit }) => {
         <input
           id="url"
           type="text"
+          name="url"
           value={formValues?.url || ''}
           onChange={({ target }) => handleChange('url', target.value)}
         />

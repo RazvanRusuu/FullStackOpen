@@ -94,11 +94,10 @@ const App = () => {
   return (
     <div>
       <Notification message={notification.message} type={notification.type} />
-
+      <h2>blogs</h2>
       {!user && <LoginForm onSubmit={handleSubmit} />}
       {user && (
         <>
-          <h2>blogs</h2>
           <UserDetails user={user} setUser={setUser} />
           <Togglable ref={newBlogRef} buttonLabel="New Blog">
             <BlogForm handleBlogSubmit={handleBlogSubmit} />
