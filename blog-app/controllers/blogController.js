@@ -77,7 +77,11 @@ exports.updateBlog = async (req, res) => {
       runValidators: true,
       new: true,
     }
-  );
+  ).populate("user", {
+    id: 1,
+    username: 1,
+    name: 1,
+  });
 
   if (!updatedBlog) {
     return res.status(404).json({

@@ -50,12 +50,34 @@ const App = () => {
     }
   }
 
-  const handleDelete = (deletedBlog) => {
+  const handleDelete = async (deletedBlog) => {
+    if (
+      !window.confirm(
+        `Remove blog ${deletedBlog.title} by ${deletedBlog.author}`
+      )
+    )
+      return
+
+    await blogService.deleteBlog(deletedBlog)
+
     const updatedBlogs = blogs.filter(
       (currBlog) => currBlog.id !== deletedBlog.id
     )
 
     setBlogs(updatedBlogs)
+  }
+
+  const handleLike = async (blog) => {
+    try {
+      const { data } = await blogService.updateBlog(blog)
+      const updatedBlogs = blogs.map((blog) => {
+        console.log(blog, data)
+        return blog.id === data.id ? data : blog
+      })
+      setBlogs(updatedBlogs)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -83,7 +105,12 @@ const App = () => {
           </Togglable>
 
           {sortedBlogsByLikes.map((blog) => (
-            <Blog onDelete={handleDelete} key={blog.id} blog={blog} />
+            <Blog
+              onDelete={handleDelete}
+              onLike={handleLike}
+              key={blog.id}
+              blog={blog}
+            />
           ))}
         </>
       )}

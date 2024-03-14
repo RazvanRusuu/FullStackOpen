@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
-import blogs from '../services/blogs'
 
-const Blog = ({ blog, onDelete }) => {
+const Blog = ({ blog, onDelete, onLike }) => {
   const [show, setShow] = useState(false)
-  const [initialBlog, setInitialBlog] = useState(blog)
   const user = JSON.parse(localStorage.getItem('blog_auth'))
 
   const blogCard = {
@@ -22,58 +20,35 @@ const Blog = ({ blog, onDelete }) => {
     borderRadius: '4px',
   }
 
-  const handleLike = async (blog) => {
-    try {
-      const { data } = await blogService.updateBlog(blog)
-      setInitialBlog(data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const handleDelete = async (blog) => {
-    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
-
-    try {
-      await blogService.deleteBlog(blog)
-      onDelete(blog)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   return (
     <div style={blogCard}>
-      <div>
-        <span>{initialBlog.title}</span>
-
+      <div style={{ display: 'flex', gap: '4px' }} className="blog-info">
+        <span>{blog.title}</span>
+        <span>{blog.author}</span>
         <button style={buttonStyle} onClick={() => setShow((prev) => !prev)}>
           {show ? 'hide' : 'view'}
         </button>
       </div>
       {show && (
-        <>
-          <span>{initialBlog.url}</span>
+        <div className="blog-details">
+          <span>{blog.url}</span>
           <div>
-            <span>{initialBlog.likes}</span>
+            <span>{blog.likes}</span>
             <button
-              onClick={() =>
-                handleLike({ ...initialBlog, likes: initialBlog.likes + 1 })
-              }
+              onClick={() => onLike({ ...blog, likes: blog.likes + 1 })}
               style={buttonStyle}
             >
               Like
             </button>
           </div>
-          <span>{initialBlog.author}</span>
           <button
-            onClick={() => handleDelete(initialBlog)}
-            hidden={user.id !== initialBlog?.user?.id}
+            onClick={() => onDelete(blog)}
+            hidden={user?.id !== blog?.user?.id}
             style={{ ...buttonStyle, backgroundColor: 'red', color: 'white' }}
           >
             Delete
           </button>
-        </>
+        </div>
       )}
     </div>
   )
