@@ -4,14 +4,14 @@ const UserDetails = ({ user, setUser }) => {
       <p>{user.name} is logged in</p>
       <button
         onClick={() => {
-          localStorage.removeItem("blog_auth");
-          setUser("");
+          localStorage.removeItem('blog_auth')
+          setUser('')
         }}
       >
         Logout
       </button>
     </>
-  );
-};
+  )
+}
 
-export default UserDetails;
+export default UserDetails

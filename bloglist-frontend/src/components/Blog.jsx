@@ -1,48 +1,46 @@
-import { useState } from "react";
-import blogService from "../services/blogs";
-import blogs from "../services/blogs";
+import { useState } from 'react'
+import blogService from '../services/blogs'
+import blogs from '../services/blogs'
 
 const Blog = ({ blog, onDelete }) => {
-  const [show, setShow] = useState(false);
-  const [initialBlog, setInitialBlog] = useState(blog);
-  const user = JSON.parse(localStorage.getItem("blog_auth"));
-
-  console.log(user, initialBlog);
+  const [show, setShow] = useState(false)
+  const [initialBlog, setInitialBlog] = useState(blog)
+  const user = JSON.parse(localStorage.getItem('blog_auth'))
 
   const blogCard = {
-    padding: "2px",
-    border: "1px solid black",
-    marginBottom: "5px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "start",
-  };
+    padding: '2px',
+    border: '1px solid black',
+    marginBottom: '5px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'start',
+  }
 
   const buttonStyle = {
-    backgroundColor: "white",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-  };
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+  }
 
   const handleLike = async (blog) => {
     try {
-      const { data } = await blogService.updateBlog(blog);
-      setInitialBlog(data);
+      const { data } = await blogService.updateBlog(blog)
+      setInitialBlog(data)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
 
   const handleDelete = async (blog) => {
-    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return;
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) return
 
     try {
-      await blogService.deleteBlog(blog);
-      onDelete(blog);
+      await blogService.deleteBlog(blog)
+      onDelete(blog)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
 
   return (
     <div style={blogCard}>
@@ -50,7 +48,7 @@ const Blog = ({ blog, onDelete }) => {
         <span>{initialBlog.title}</span>
 
         <button style={buttonStyle} onClick={() => setShow((prev) => !prev)}>
-          {show ? "hide" : "view"}
+          {show ? 'hide' : 'view'}
         </button>
       </div>
       {show && (
@@ -71,14 +69,14 @@ const Blog = ({ blog, onDelete }) => {
           <button
             onClick={() => handleDelete(initialBlog)}
             hidden={user.id !== initialBlog?.user?.id}
-            style={{ ...buttonStyle, backgroundColor: "red", color: "white" }}
+            style={{ ...buttonStyle, backgroundColor: 'red', color: 'white' }}
           >
             Delete
           </button>
         </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Blog;
+export default Blog
