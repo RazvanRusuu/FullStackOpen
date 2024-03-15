@@ -13,6 +13,24 @@ const getUsers = async (req, res) => {
   res.json({ status: "success", data: users });
 };
 
+const getUser = async (req, res) => {
+  const id = req.params.id;
+
+  const user = await User.findById(id).populate("blogs", {
+    username: 0,
+    id: 0,
+    user: 0,
+  });
+
+  if (!user) {
+    return res
+      .status(400)
+      .json({ status: "fail", message: "No user found with this id" });
+  }
+
+  res.status(200).json({ status: "succes", data: user });
+};
+
 const createUsers = async (req, res) => {
   const { username, name, password } = req.body;
   const saltRounds = 10;
@@ -51,4 +69,5 @@ const createUsers = async (req, res) => {
 module.exports = {
   getUsers,
   createUsers,
+  getUser,
 };

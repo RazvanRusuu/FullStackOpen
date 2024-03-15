@@ -1,4 +1,5 @@
 const errorHandler = (err, req, res, next) => {
+  console.log(err);
   if (err.name === "CastError") {
     return res.status(404).json("Cast Error- in progress");
   }

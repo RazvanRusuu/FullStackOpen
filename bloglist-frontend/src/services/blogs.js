@@ -1,12 +1,17 @@
 import axios from 'axios'
 const baseUrl = '/api/blogs'
 
-axios.interceptors.request.use(function (config) {
-  const user = JSON.parse(localStorage.getItem('blog_auth'))
-  if (user && user.token) config.headers.Authorization = `Bearer ${user.token}`
+export const defineConfig = (axios) => {
+  return axios.interceptors.request.use(function (config) {
+    const user = JSON.parse(localStorage.getItem('blog_auth'))
+    if (user && user.token)
+      config.headers.Authorization = `Bearer ${user.token}`
 
-  return config
-})
+    return config
+  })
+}
+
+defineConfig(axios)
 
 const getAll = async () => {
   const request = await axios.get(baseUrl)

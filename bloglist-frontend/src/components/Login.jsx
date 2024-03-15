@@ -3,10 +3,12 @@ import { useMutation } from '@tanstack/react-query'
 import loginService from '../services/login'
 import { useUserDispatch } from '../context/userContext'
 import { useNotificationDispatch } from '../context/notificationContext'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
-  const dispatchUser = useUserDispatch()
   const setNotification = useNotificationDispatch()
+  const navigate = useNavigate()
+  const dispatchUser = useUserDispatch()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -19,6 +21,7 @@ const LoginForm = () => {
     onSuccess: (data) => {
       localStorage.setItem('blog_auth', JSON.stringify(data.data))
       dispatchUser({ type: 'SET_USER', payload: data.data })
+      navigate('/')
     },
     onError: (error) => {
       setNotification({
