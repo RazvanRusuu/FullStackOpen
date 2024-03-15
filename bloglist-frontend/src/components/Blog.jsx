@@ -1,7 +1,14 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
 
-const Blog = ({ blog, onDelete, onLike }) => {
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import blogService from '../services/blogs'
+import { useNotificationDispatch } from '../context/notificationContext'
+
+const Blog = ({ blog }) => {
+  const queryClient = useQueryClient()
+  const setNotification = useNotificationDispatch()
+
   const [show, setShow] = useState(false)
   const user = JSON.parse(localStorage.getItem('blog_auth'))
 
@@ -20,6 +27,50 @@ const Blog = ({ blog, onDelete, onLike }) => {
     borderRadius: '4px',
   }
 
+  const deleteMutation = useMutation({
+    mutationFn: blogService.deleteBlog,
+    onSuccess: (_, deletedBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      const updatedBlogs = blogs.filter((blog) => blog.id !== deletedBlog.id)
+      queryClient.setQueriesData(['blogs'], updatedBlogs)
+      setNotification({
+        type: 'SET_NOTIFICATION',
+        payload: {
+          message: `${deletedBlog.title} has been deleted`,
+          type: 'success',
+        },
+      })
+    },
+  })
+
+  const updateBlog = useMutation({
+    mutationFn: blogService.updateBlog,
+    onSuccess: ({ data }) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      const updatedBlogs = blogs.map((blog) =>
+        blog.id === data.id ? data : blog
+      )
+      queryClient.setQueriesData(['blogs'], updatedBlogs)
+      setNotification({
+        type: 'SET_NOTIFICATION',
+        payload: {
+          message: `${data.title} has been updated`,
+          type: 'success',
+        },
+      })
+    },
+  })
+
+  const handleDelete = async (deletedBlog) => {
+    const confirmQst = `Remove blog ${deletedBlog.title} by ${deletedBlog.author}`
+    if (!window.confirm(confirmQst)) return
+    deleteMutation.mutate(deletedBlog)
+  }
+
+  const handleLike = async (blog) => {
+    updateBlog.mutate(blog)
+  }
+
   return (
     <div style={blogCard}>
       <div style={{ display: 'flex', gap: '4px' }} className="blog-info">
@@ -35,14 +86,14 @@ const Blog = ({ blog, onDelete, onLike }) => {
           <div>
             <span>{blog.likes}</span>
             <button
-              onClick={() => onLike({ ...blog, likes: blog.likes + 1 })}
+              onClick={() => handleLike({ ...blog, likes: blog.likes + 1 })}
               style={buttonStyle}
             >
               Like
             </button>
           </div>
           <button
-            onClick={() => onDelete(blog)}
+            onClick={() => handleDelete(blog)}
             hidden={user?.id !== blog?.user?.id}
             style={{ ...buttonStyle, backgroundColor: 'red', color: 'white' }}
           >

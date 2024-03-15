@@ -1,7 +1,12 @@
 import { useState } from 'react'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import blogService from '../services/blogs'
+import { useNotificationDispatch } from '../context/notificationContext'
 
-const BlogForm = ({ handleBlogSubmit }) => {
+const BlogForm = ({ onToggleVisibility }) => {
   const [formValues, setFormValues] = useState(null)
+  const setNotification = useNotificationDispatch()
+  const queryClient = useQueryClient()
 
   const handleChange = (name, value) => [
     setFormValues((prev) => {
@@ -15,8 +20,30 @@ const BlogForm = ({ handleBlogSubmit }) => {
       return
     }
     setFormValues({})
-    handleBlogSubmit(formValues)
+    createBlog.mutate(formValues)
   }
+
+  const createBlog = useMutation({
+    mutationFn: blogService.createBlog,
+    onSuccess: ({ data }) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      queryClient.setQueriesData(['blogs'], blogs.concat(data))
+      onToggleVisibility()
+      setNotification({
+        type: 'SET_NOTIFICATION',
+        payload: {
+          message: `A new blog added ${data.title} by ${data.author}`,
+          type: 'success',
+        },
+      })
+    },
+    onError: (error) => {
+      setNotification({
+        type: 'SET_NOTIFICATION',
+        payload: { message: error.response.data.error, type: 'error' },
+      })
+    },
+  })
 
   return (
     <form

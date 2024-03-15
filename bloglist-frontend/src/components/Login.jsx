@@ -1,10 +1,35 @@
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import loginService from '../services/login'
+import { useUserDispatch } from '../context/userContext'
+import { useNotificationDispatch } from '../context/notificationContext'
 
-const LoginForm = ({ onSubmit }) => {
+const LoginForm = () => {
+  const dispatchUser = useUserDispatch()
+  const setNotification = useNotificationDispatch()
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const [errors, setErrors] = useState(null)
+
+  const mutation = useMutation({
+    mutationKey: ['login'],
+    mutationFn: loginService.login,
+    onSuccess: (data) => {
+      localStorage.setItem('blog_auth', JSON.stringify(data.data))
+      dispatchUser({ type: 'SET_USER', payload: data.data })
+    },
+    onError: (error) => {
+      setNotification({
+        type: 'SET_NOTIFICATION',
+        payload: {
+          message: error.data.message,
+          type: 'error',
+        },
+      })
+    },
+  })
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -18,7 +43,7 @@ const LoginForm = ({ onSubmit }) => {
       return
     }
 
-    onSubmit(username, password)
+    mutation.mutate({ username, password })
     setUsername('')
     setPassword('')
   }

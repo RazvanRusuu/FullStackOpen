@@ -8,9 +8,9 @@ axios.interceptors.request.use(function (config) {
   return config
 })
 
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then((response) => response.data.data)
+const getAll = async () => {
+  const request = await axios.get(baseUrl)
+  return request.data.data
 }
 
 const createBlog = async (body) => {

@@ -1,15 +1,13 @@
-const UserDetails = ({ user, setUser }) => {
+import { useUserDispatch, useUserValue } from '../context/userContext'
+
+const UserDetails = () => {
+  const user = useUserValue()
+  const dispatchUser = useUserDispatch()
+
   return (
     <>
       <p>{user.name} is logged in</p>
-      <button
-        onClick={() => {
-          localStorage.removeItem('blog_auth')
-          setUser('')
-        }}
-      >
-        Logout
-      </button>
+      <button onClick={() => dispatchUser({ type: 'LOGOUT' })}>Logout</button>
     </>
   )
 }
