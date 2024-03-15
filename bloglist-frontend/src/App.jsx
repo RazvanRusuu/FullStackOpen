@@ -1,18 +1,27 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 import LoginForm from './components/Login'
-import loginService from './services/login'
 
 import UserDetails from './components/UserDetails'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import Togglable from './components/Toggble'
+import { setNotificationTimer } from './reducers/notificationSlice'
+import {
+  deleteBlogAsync,
+  initBlogs,
+  setBlogAsync,
+  updateBlogAsync,
+} from './reducers/blogSlice'
+import { setUser, setUserAsync } from './reducers/userSlice'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector((state) => state.blogs)
+  const user = useSelector((state) => state.user)
+
   const [notification, setNotification] = useState('')
-  const [user, setUser] = useState('')
+  const dispatch = useDispatch()
 
   const handleNotification = (content) => {
     setNotification(content)
@@ -25,9 +34,7 @@ const App = () => {
 
   const handleSubmit = async (username, password) => {
     try {
-      const response = await loginService.login({ username, password })
-      setUser(response.data)
-      localStorage.setItem('blog_auth', JSON.stringify(response.data))
+      dispatch(setUserAsync({ username, password }))
     } catch (error) {
       handleNotification({
         message: error.data.message,
@@ -36,56 +43,49 @@ const App = () => {
     }
   }
 
-  const handleBlogSubmit = async (body) => {
+  const handleBlogSubmit = async (data) => {
     try {
-      const { data } = await blogService.createBlog(body)
-      handleNotification({
-        message: `A new blog added ${data.title} by ${data.author}`,
-        type: 'success',
-      })
-      setBlogs((prev) => [...prev, data])
+      dispatch(setBlogAsync(data))
+      dispatch(
+        setNotificationTimer({
+          message: `A new blog added ${data.title} by ${data.author}`,
+          type: 'success',
+        })
+      )
       newBlogRef.current.toggleVisibility()
     } catch (error) {
-      handleNotification({ message: error.response.data.error, type: 'error' })
+      dispatch(
+        setNotificationTimer({
+          message: error.response.data.error,
+          type: 'error',
+        })
+      )
     }
   }
 
   const handleDelete = async (deletedBlog) => {
-    if (
-      !window.confirm(
-        `Remove blog ${deletedBlog.title} by ${deletedBlog.author}`
-      )
-    )
-      return
-
-    await blogService.deleteBlog(deletedBlog)
-
-    const updatedBlogs = blogs.filter(
-      (currBlog) => currBlog.id !== deletedBlog.id
-    )
-
-    setBlogs(updatedBlogs)
+    const message = `Remove blog ${deletedBlog.title} by ${deletedBlog.author}`
+    if (!window.confirm(message)) return
+    dispatch(deleteBlogAsync(deletedBlog))
   }
 
   const handleLike = async (blog) => {
     try {
-      const { data } = await blogService.updateBlog(blog)
-      const updatedBlogs = blogs.map((blog) => {
-        console.log(blog, data)
-        return blog.id === data.id ? data : blog
-      })
-      setBlogs(updatedBlogs)
+      dispatch(updateBlogAsync(blog))
     } catch (error) {
       console.log(error)
     }
   }
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
+    dispatch(initBlogs())
 
-    const user = JSON.parse(localStorage.getItem('blog_auth'))
+    const userLS = localStorage.getItem('blog_auth')
+
+    const user = userLS && JSON.parse(userLS)
+
     if (user) {
-      setUser(user)
+      dispatch(setUser(user))
     }
   }, [])
 

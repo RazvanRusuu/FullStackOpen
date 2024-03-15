@@ -1,6 +1,12 @@
-const Notification = ({ message, type = 'success' }) => {
+import { useSelector } from 'react-redux'
+
+const Notification = () => {
+  const { message, type } = useSelector((state) => state.notification) || {}
+
   const messageType = type === 'success' ? 'green' : 'red'
+
   if (!message) return null
+
   return (
     <p
       style={{
