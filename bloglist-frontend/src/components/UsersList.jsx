@@ -23,8 +23,9 @@ const UsersList = () => {
           <div
             key={id}
             style={{
-              gridColumn: '1/-1',
+              gridColumn: '1 / span 2',
               display: 'flex',
+              justifyContent: 'space-between',
             }}
           >
             <Link to={`/users/${id}`}>{name}</Link>

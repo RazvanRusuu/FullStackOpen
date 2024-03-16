@@ -1,12 +1,11 @@
 import { Outlet, useNavigate } from 'react-router-dom'
-import { useUserDispatch, useUserValue } from '../context/userContext'
+import { useUserDispatch } from '../context/userContext'
 
 import { useEffect } from 'react'
 
 const Auth = () => {
   const dispatchUser = useUserDispatch()
   const navigate = useNavigate()
-  const user = useUserValue()
 
   useEffect(() => {
     const userLS = localStorage.getItem('blog_auth')

@@ -9,6 +9,8 @@ const BlogList = () => {
   })
   const sortedBlogsByLikes = blogs?.toSorted((a, b) => a.likes - b.likes)
 
+  console.log(sortedBlogsByLikes)
+
   return (
     <>
       {sortedBlogsByLikes?.map((blog) => (

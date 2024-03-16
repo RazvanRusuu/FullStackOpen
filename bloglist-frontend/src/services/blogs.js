@@ -18,6 +18,11 @@ const getAll = async () => {
   return request.data.data
 }
 
+const getBlog = async (id) => {
+  const request = await axios.get(`${baseUrl}/${id}`)
+  return request.data.data
+}
+
 const createBlog = async (body) => {
   const request = await axios.post(baseUrl, body)
   return request.data
@@ -32,4 +37,4 @@ const deleteBlog = async (blog) => {
   await axios.delete(`${baseUrl}/${blog.id}`)
 }
 
-export default { getAll, createBlog, updateBlog, deleteBlog }
+export default { getAll, createBlog, updateBlog, deleteBlog, getBlog }
