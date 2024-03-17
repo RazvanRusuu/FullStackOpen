@@ -16,6 +16,34 @@ exports.deleteBlog = async (req, res) => {
   res.status(204).end();
 };
 
+exports.addCommentToBlog = async (req, res) => {
+  const id = req.params.id;
+  const { content } = req.body;
+
+  const blog = await Blog.findById(id);
+
+  if (!blog) {
+    return res.status(404).json({
+      status: "fail",
+      message: `Blog with id ${id} has not been found`,
+    });
+  }
+
+  const newComment = {
+    content,
+    user: req.userId,
+  };
+
+  blog.comments = blog.comments.concat(newComment);
+
+  await blog.save({ validateBeforeSave: true });
+
+  res.status(200).json({
+    message: "succes",
+    data: blog,
+  });
+};
+
 exports.createBlog = async (req, res) => {
   const { title, author, likes, url } = req.body;
 

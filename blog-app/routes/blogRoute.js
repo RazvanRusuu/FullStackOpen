@@ -8,6 +8,7 @@ const {
   getBlog,
   updateBlog,
   deleteBlog,
+  addCommentToBlog,
 } = require("../controllers/blogController");
 const { verifyToken, blogVerifyUser } = require("../middleware/middleware");
 
@@ -17,5 +18,6 @@ router
   .get(getBlog)
   .put(verifyToken, updateBlog)
   .delete(verifyToken, blogVerifyUser, deleteBlog);
+router.post("/:id/comments", verifyToken, addCommentToBlog);
 
 module.exports = router;

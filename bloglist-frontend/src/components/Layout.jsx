@@ -6,7 +6,9 @@ const Layout = () => {
     <div>
       <AppMenu />
       <h1>Blogs</h1>
-      <Outlet />
+      <div className="px-4">
+        <Outlet />
+      </div>
     </div>
   )
 }
