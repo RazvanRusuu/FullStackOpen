@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ReactDOM from 'react-dom/client'
+import './index.css'
 
 import { NotificationContextProvider } from './context/notificationContext'
 import { BrowserRouter } from 'react-router-dom'

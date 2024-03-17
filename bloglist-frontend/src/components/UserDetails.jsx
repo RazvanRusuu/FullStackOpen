@@ -12,10 +12,17 @@ const UserDetails = () => {
   }
 
   return (
-    <>
-      <p>{user?.name} is logged in</p>
-      <button onClick={handleLogout}>Logout</button>
-    </>
+    <div className="flex items-center gap-2">
+      <p>
+        <span className="font-bold">{user?.name}</span> is logged in
+      </p>
+      <button
+        className="border border-gray-300 bg-slate-300 text-black text-md px-1 py-1 rounded"
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
+    </div>
   )
 }
 

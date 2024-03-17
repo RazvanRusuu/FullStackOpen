@@ -14,13 +14,23 @@ const Togglable = (props) => {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+        <button
+          className="border border-gray-300 rounded px-1 text-sm mb-2"
+          onClick={toggleVisibility}
+        >
+          {props.buttonLabel}
+        </button>
       </div>
       <div style={showWhenVisible}>
         {cloneElement(props.children, {
           onToggleVisibility: toggleVisibility,
         })}
-        <button onClick={toggleVisibility}>cancel</button>
+        <button
+          className="border border-gray-300 rounded px-1 text-sm mb-2"
+          onClick={toggleVisibility}
+        >
+          cancel
+        </button>
       </div>
     </div>
   )

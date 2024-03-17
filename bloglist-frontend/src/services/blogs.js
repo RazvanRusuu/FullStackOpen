@@ -15,6 +15,7 @@ defineConfig(axios)
 
 const getAll = async () => {
   const request = await axios.get(baseUrl)
+  console.log(request.data.data)
   return request.data.data
 }
 

@@ -1,22 +1,26 @@
 import { useQuery } from '@tanstack/react-query'
 import blogService from '../services/blogs'
 import Blog from './Blog'
+import AddBlog from './AddBlog'
 
 const BlogList = () => {
-  const { data: blogs } = useQuery({
+  const { data } = useQuery({
     queryKey: ['blogs'],
     queryFn: blogService.getAll,
+    initialData: [],
   })
-  const sortedBlogsByLikes = blogs?.toSorted((a, b) => a.likes - b.likes)
 
-  console.log(sortedBlogsByLikes)
+  const sortedBlogsByLikes = Array.isArray(data)
+    ? data.toSorted((a, b) => a.likes - b.likes)
+    : []
 
   return (
-    <>
+    <div className="container max-lg mx-auto">
+      <AddBlog />
       {sortedBlogsByLikes?.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
-    </>
+    </div>
   )
 }
 

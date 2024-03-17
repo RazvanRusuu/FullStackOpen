@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import blogService from '../services/blogs'
 import { useNotificationDispatch } from '../context/notificationContext'
+import { Link } from 'react-router-dom'
 
 const Blog = ({ blog }) => {
   const queryClient = useQueryClient()
@@ -15,6 +16,7 @@ const Blog = ({ blog }) => {
   const blogCard = {
     padding: '2px',
     border: '1px solid black',
+    borderRadius: '5px',
     marginBottom: '5px',
     display: 'flex',
     flexDirection: 'column',
@@ -25,6 +27,8 @@ const Blog = ({ blog }) => {
     backgroundColor: 'white',
     border: '1px solid #ccc',
     borderRadius: '4px',
+    padding: '2px',
+    fontSize: '12px',
   }
 
   const deleteMutation = useMutation({
@@ -74,8 +78,10 @@ const Blog = ({ blog }) => {
   return (
     <div style={blogCard}>
       <div style={{ display: 'flex', gap: '4px' }} className="blog-info">
-        <span>{blog.title}</span>
-        <span>{blog.author}</span>
+        <Link to={'/blogs/' + blog.id}>
+          <span>{blog.title}</span>
+          <span>{blog.author}</span>
+        </Link>
         <button style={buttonStyle} onClick={() => setShow((prev) => !prev)}>
           {show ? 'hide' : 'view'}
         </button>

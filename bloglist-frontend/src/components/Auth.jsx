@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from 'react-router-dom'
-import { useUserDispatch } from '../context/userContext'
 
 import { useEffect } from 'react'
+import { useUserDispatch } from '../context/userContext'
 
 const Auth = () => {
   const dispatchUser = useUserDispatch()
@@ -9,14 +9,12 @@ const Auth = () => {
 
   useEffect(() => {
     const userLS = localStorage.getItem('blog_auth')
-
     const user = userLS && JSON.parse(userLS)
 
-    if (user) {
-      return dispatchUser({ type: 'SET_USER', payload: user })
+    if (!user) {
+      navigate('login')
     }
-
-    navigate('/login')
+    dispatchUser({ type: 'SET_USER', payload: user })
   }, [])
 
   return <Outlet />
