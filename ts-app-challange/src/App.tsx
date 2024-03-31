@@ -1,6 +1,5 @@
 import Content from "./components/Content";
 import Header from "./components/Header";
-import Part from "./components/Part";
 import Total from "./components/Total";
 import { CoursePart } from "./types";
 
@@ -38,6 +37,13 @@ const App = () => {
       exerciseCount: 10,
       description: "a hard part",
       kind: "basic",
+    },
+    {
+      name: "Backend development",
+      exerciseCount: 21,
+      description: "Typing the backend",
+      requirements: ["nodejs", "jest"],
+      kind: "special",
     },
   ];
 
