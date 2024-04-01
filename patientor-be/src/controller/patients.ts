@@ -5,9 +5,11 @@ import { toNewPatientData } from "../../utilis/utils";
 import patientData from "../../data/patients";
 
 const getPatientNonSensitive = (): PatientNonSensitive[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => {
-    return { id, name, dateOfBirth, gender, occupation };
-  });
+  return patients.map(
+    ({ id, name, dateOfBirth, gender, occupation, entries }) => {
+      return { id, name, dateOfBirth, gender, occupation, entries };
+    }
+  );
 };
 
 const getPatients = (_req: Request, res: Response) => {
@@ -22,4 +24,11 @@ const addPatient = (req: Request, res: Response) => {
   res.json(newPatientData);
 };
 
-export { getPatients, addPatient };
+const getPatient = (req: Request, res: Response) => {
+  const id = req.params.id;
+  const patient = patients.find((p) => p.id === id);
+
+  res.send(patient);
+};
+
+export { getPatients, addPatient, getPatient };

@@ -37,7 +37,8 @@ const toNewPatientData = (object: unknown): Patient => {
     "dateOfBirth" in object &&
     "ssn" in object &&
     "gender" in object &&
-    "occupation" in object
+    "occupation" in object &&
+    "entries" in object
   ) {
     const newPatient = {
       id: uuid(),
@@ -46,6 +47,8 @@ const toNewPatientData = (object: unknown): Patient => {
       ssn: parseValue(object.ssn),
       occupation: parseValue(object.occupation),
       gender: parseGender(object.gender),
+      // entries: object.entries,
+      entries: [],
     };
 
     return newPatient;
