@@ -9,12 +9,26 @@ const PatientView = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
 
   useEffect(() => {
-    const getData = async () => {
+    const getPatientData = async () => {
       const patient = await axios.get(`${apiBaseUrl}/patients/${id}`);
       setPatient(patient.data);
     };
+
+    getPatientData();
   }, [id]);
-  return <div>PatientView</div>;
+
+  console.log(patient);
+  return (
+    <div style={{ margin: "20px 0" }}>
+      <h2>{patient?.name}</h2>
+      <p>
+        ssn: <span>{patient?.ssn}</span>
+      </p>
+      <p>
+        occupation: <span>{patient?.occupation}</span>
+      </p>
+    </div>
+  );
 };
 
 export default PatientView;
